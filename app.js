@@ -31,6 +31,23 @@ const S = {
 <div class="field"><label class="label">${p.label} API Key</label><input type="password" id="k-${p.id}" placeholder="${p.ph}" autocomplete="off"><div class="hint">${p.hint}</div></div>
 <div class="field"><label class="label">Model</label><select id="m-${p.id}">${p.models.map(g => `<optgroup label="── ${g.g} ──">${g.opts.map((o, oi) => `<option value="${o.v}"${oi === 0 ? ' selected' : ''}>${o.l}</option>`).join('')}</optgroup>`).join('')}</select><div class="hint">${p.fn}</div></div>`;
     panels.appendChild(d);
+     if (p.id === "custom") {
+  d.innerHTML += `
+  <div class="field">
+    <label class="label">Base URL</label>
+    <input type="text" id="custom-base-url"
+      placeholder="https://api.groq.com or http://localhost:11434"
+      autocomplete="off">
+    <div class="hint">OpenAI-compatible endpoint (without /v1/chat/completions)</div>
+  </div>
+  <div class="field">
+    <label class="label">Model Name</label>
+    <input type="text" id="custom-model-input"
+      placeholder="e.g. llama3-8b-8192 or mistral-7b"
+      autocomplete="off">
+    <div class="hint">Exact model name as required by the provider</div>
+  </div>`;
+}
   });
 })();
 
@@ -83,7 +100,7 @@ function validateAPI() {
   const et = document.getElementById('api-err-txt');
   eb.style.display = 'none';
   if (!k) { eb.style.display = 'flex'; et.innerHTML = 'Please enter your ' + p.label + ' API key.'; return; }
-  if (!k.startsWith(p.kp)) { eb.style.display = 'flex'; et.innerHTML = '<strong>Wrong format!</strong> ' + p.label + ' keys start with <code>' + p.kp + '…</code>'; return; }
+  if (p.kp && !k.startsWith(p.kp)) { eb.style.display = 'flex'; et.innerHTML = '<strong>Wrong format!</strong> ' + p.label + ' keys start with <code>' + p.kp + '…</code>'; return; }
   S.key = k; S.model = document.getElementById('m-' + S.prov)?.value || '';
   document.getElementById('step1').style.display = 'none';
   document.getElementById('step2').style.display = 'block';
